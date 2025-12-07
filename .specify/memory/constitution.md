@@ -1,55 +1,74 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+Version change: 0.0.0 -> 1.0.0
+Modified principles: All new.
+Added sections: Vision, Success Criteria, Constraints, Stakeholders, Technology Stack.
+Removed sections: None.
+Templates requiring updates:
+- .specify/templates/plan-template.md: ⚠ pending
+- .specify/templates/spec-template.md: ⚠ pending
+- .specify/templates/tasks-template.md: ⚠ pending
+- .specify/templates/commands/*.md: ⚠ pending
+Follow-up TODOs: None.
+-->
+# Physical AI & Humanoid Robotics Textbook Constitution
+
+## Vision
+
+To create the leading AI-native textbook for physical AI and humanoid robotics, featuring an integrated RAG Chatbot, hands-on learning, and personalized content, fostering a global community of learners and innovators in the field.
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Hands-on Learning First
+Every concept and technology presented must be accompanied by practical, runnable examples and exercises. The learning experience must prioritize active engagement over passive consumption, enabling users to apply knowledge directly.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Personalized Learning Pathways
+The platform must adapt content delivery and recommendations based on the user's background, skill level, and learning pace. This ensures relevance and optimizes the educational journey for each individual.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Multilingual Accessibility (Urdu Priority)
+The textbook and chatbot must support multiple languages, with Urdu translation as a core, high-priority feature. This expands reach and inclusivity, making advanced robotics education accessible to a wider global audience.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. AI-Native & Chatbot Integration
+The RAG Chatbot is integral to the learning experience, providing interactive support, clarification, and supplementary information. AI technologies must be leveraged throughout the platform to enhance content generation, personalization, and user engagement.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Modern Tech Stack Adherence
+Development must strictly adhere to best practices and architectural patterns compatible with the chosen technology stack: Docusaurus, Python FastAPI, OpenAI Agents/ChatKit SDK, Qdrant Cloud, Neon Postgres, and Better-Auth. This ensures scalability, maintainability, and security.
 
-### [PRINCIPLE_6_NAME]
+## Success Criteria
 
+- High user engagement and satisfaction as measured by feedback and usage analytics.
+- Demonstrated improvement in user understanding and practical application of robotics concepts.
+- Stable and performant RAG Chatbot delivering accurate and relevant responses.
+- Seamless and intuitive user experience across all features, including personalization and translation.
+- Successful deployment and maintenance on GitHub Pages with robust backend services.
 
-[PRINCIPLE__DESCRIPTION]
+## Constraints
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+- **Content Scope**: Focus on ROS 2, Gazebo, NVIDIA Isaac, and VLA.
+- **Backend Infrastructure**: Utilize Qdrant Cloud (Free Tier) and Neon Postgres.
+- **Authentication**: Implement user signup/signin via Better-Auth.
+- **Frontend Deployment**: Exclusively deploy documentation to GitHub Pages.
+- **Resource Limitations**: Adhere to the constraints of free-tier services where applicable, optimizing for cost-effectiveness.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Stakeholders
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+- **Learners**: Primary users seeking to learn physical AI and humanoid robotics.
+- **Educators**: Potential instructors adopting the textbook for their courses.
+- **Content Creators/Maintainers**: Team responsible for developing and updating textbook content.
+- **Developers**: Team responsible for building and maintaining the platform's features and infrastructure.
+- **OpenAI**: Provider of AI agent and ChatKit SDK technologies.
+- **Qdrant Cloud/Neon Postgres/Better-Auth**: External service providers.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Technology Stack
+
+- **Frontend/Documentation**: Docusaurus (for static site generation and content rendering), deployed to GitHub Pages.
+- **Backend/Chatbot Services**: Python FastAPI (for API endpoints and business logic), integrating with OpenAI Agents/ChatKit SDK for AI functionalities.
+- **Vector Database**: Qdrant Cloud (Free Tier) for efficient RAG (Retrieval Augmented Generation) capabilities.
+- **Relational Database**: Neon Postgres for persistent data storage and management.
+- **Authentication**: Better-Auth for secure user signup and sign-in processes.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This Constitution serves as the foundational governance document for the "Physical AI & Humanoid Robotics Textbook" project. All design, development, and operational decisions must align with the principles and guidelines outlined herein. Amendments to this Constitution require thorough documentation, stakeholder approval, and a clear migration plan for any affected systems or practices. All pull requests and code reviews must explicitly verify compliance with these principles. Complexity must always be justified against the principles of simplicity and maintainability.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2025-12-05 | **Last Amended**: 2025-12-05
