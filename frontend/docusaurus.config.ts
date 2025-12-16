@@ -15,15 +15,17 @@ const config: Config = {
   },
 
 // Set the production url of your site here
-url: 'https://example.com',
-// Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '',
+  url: 'https://example.com', // Yeh theek hai (Dummy URL)
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: '', // Usually your GitHub org/user name.
-  projectName: '', // Usually your repo name.
+  // ⚠️ CHANGE 1: Base URL must be a slash '/'
+  baseUrl: '/',
+
+  // ⚠️ CHANGE 2: Add this line to prevent 404 Errors on Vercel
+  trailingSlash: false,
+
+  // GitHub pages stuff (Inko khali rehne dein, Vercel ko farq nahi padta)
+  organizationName: '', 
+  projectName: '', 
 
   onBrokenLinks: 'throw',
 
