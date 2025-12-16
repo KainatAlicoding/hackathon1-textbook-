@@ -1,11 +1,21 @@
 .features {
   display: flex;
   align-items: center;
-  padding: 2rem 0;
+  padding: 4rem 0;
   width: 100%;
+  background: var(--cyber-dark-bg);
 }
 
-.featureSvg {
-  height: 200px;
-  width: 200px;
+.featureIcon {
+  margin-bottom: 1.5rem;
+}
+
+.robotIcon {
+  font-size: 3rem;
+  display: inline-block;
+  padding: 1rem;
+  background: var(--cyber-light-gray);
+  border-radius: 50%;
+  border: 1px solid var(--cyber-border);
+  box-shadow: 0 0 15px rgba(0, 247, 255, 0.2);
 }

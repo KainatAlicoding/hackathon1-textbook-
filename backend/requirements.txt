@@ -1,28 +1,11 @@
-I noticed the `backend/requirements.txt` is missing critical dependencies mentioned in the Hackathon PDF (Source: Page 1 & 2).
-
-Please OVERWRITE `backend/requirements.txt` with this COMPLETE list to ensure compatibility with Neon Postgres, Qdrant, and OpenAI:
-
-```txt
-# Core Framework
 fastapi>=0.100.0
 uvicorn[standard]>=0.23.0
 pydantic>=2.0.0
 pydantic-settings>=2.0.0
-
-# Database (Neon Postgres) - REQUIRED per PDF
 sqlalchemy>=2.0.0
 asyncpg>=0.28.0
 psycopg2-binary>=2.9.0
-
-# Vector Database (Qdrant) - REQUIRED per PDF
 qdrant-client>=1.6.0
-
-# AI & LLM (OpenAI Agents) - REQUIRED per PDF
-openai>=1.0.0
-tiktoken>=0.5.0
 google-generativeai>=0.3.0
-
-# Utilities & Environment
 python-dotenv>=1.0.0
 python-multipart>=0.0.6
-httpx>=0.25.0

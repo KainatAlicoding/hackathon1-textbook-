@@ -14,16 +14,16 @@ const config: Config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
-  // Set the production url of your site here
-  url: 'https://github.com/KainatAlicoding',
-  // Set the /<baseUrl>/ pathname under which your site is served
+// Set the production url of your site here
+url: 'https://example.com',
+// Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: 'https://github.com/KainatAlicoding/hackathon1-textbook-',
+  baseUrl: '',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'https://github.com/KainatAlicoding', // Usually your GitHub org/user name.
-  projectName: 'https://github.com/KainatAlicoding/hackathon1-textbook-', // Usually your repo name.
+  organizationName: '', // Usually your GitHub org/user name.
+  projectName: '', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -58,8 +58,8 @@ const config: Config = {
             'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
+          onInlineAuthors: 'ignore', // Allow inline authors
+          onUntruncatedBlogPosts: 'ignore', // We added the truncate marker
         },
         theme: {
           customCss: './src/css/custom.css',

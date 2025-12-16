@@ -1,127 +1,104 @@
 import os
-from dotenv import load_dotenv
-from qdrant_client import QdrantClient, models
-from openai import OpenAI # Keeping OpenAI import in case it's needed later
+import glob
+import time
+from typing import List
 import google.generativeai as genai
-from typing import List, Dict
+from qdrant_client import QdrantClient
+from qdrant_client.models import PointStruct, VectorParams, Distance
+from dotenv import load_dotenv
+from pathlib import Path
 
-# Load environment variables
-load_dotenv()
+# --- LOAD ENV FROM BACKEND ROOT ---
+current_file = Path(__file__).resolve()
+backend_dir = current_file.parent.parent
+env_path = backend_dir / ".env"
+load_dotenv(dotenv_path=env_path)
 
-QDRANT_HOST = os.getenv("QDRANT_HOST")
-QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+# Setup Gemini
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-
-# Initialize clients
-qdrant_client = QdrantClient(host=QDRANT_HOST, api_key=QDRANT_API_KEY)
-
-# Configure Google Generative AI
 genai.configure(api_key=GOOGLE_API_KEY)
 
-COLLECTION_NAME = "textbook_chunks"
-FRONTEND_DOCS_PATH = os.path.join(os.getcwd(), "frontend", "docs")
+# --- ☁️ CONNECT TO QDRANT CLOUD ---
+qdrant_url = os.getenv("QDRANT_URL")
+qdrant_key = os.getenv("QDRANT_API_KEY")
 
-def get_markdown_files(path: str) -> List[str]:
-    """Recursively get all markdown files from a given path."""
-    markdown_files = []
-    for root, _, files in os.walk(path):
-        for file in files:
-            if file.endswith(".md"):
-                markdown_files.append(os.path.join(root, file))
-    return markdown_files
+if not qdrant_url or not qdrant_key:
+    raise ValueError("❌ QDRANT_URL or QDRANT_API_KEY missing in .env file")
 
-def chunk_markdown(file_path: str) -> List[Dict]:
-    """
-    Read a markdown file and split its content into chunks.
-    For simplicity, this example splits by double newlines,
-    but a more sophisticated splitter might be needed for production.
-    Each chunk will include metadata like source file.
-    """
-    with open(file_path, "r", encoding="utf-8") as f:
-        content = f.read()
+print(f"🌐 Connecting to Qdrant Cloud: {qdrant_url}")
+qdrant = QdrantClient(url=qdrant_url, api_key=qdrant_key)
 
-    chunks = []
-    raw_chunks = content.split("\n\n") # Simple split by double newline
+COLLECTION_NAME = "physical_ai_textbook"
 
-    for i, chunk_text in enumerate(raw_chunks):
-        if chunk_text.strip():
-            chunks.append({
-                "content": chunk_text.strip(),
-                "metadata": {
-                    "source_file": os.path.basename(file_path),
-                    "full_path": file_path,
-                    "chunk_id": i,
-                }
-            })
-    return chunks
+def setup_collection():
+    try:
+        # Check if collection exists
+        qdrant.get_collection(COLLECTION_NAME)
+        print(f"✅ Collection '{COLLECTION_NAME}' already exists on Cloud.")
+    except:
+        print(f"Creating collection '{COLLECTION_NAME}' on Cloud...")
+        qdrant.create_collection(
+            collection_name=COLLECTION_NAME,
+            vectors_config=VectorParams(size=768, distance=Distance.COSINE),
+        )
 
-def generate_embeddings(text: str) -> List[float]:
-    """Generate embeddings for a given text using Google Generative AI."""
-    response = genai.embed_content(
-        model="models/embedding-001",
-        content=text,
-        task_type="RETRIEVAL_DOCUMENT"
-    )
-    return response['embedding']
+def get_embedding(text: str) -> List[float]:
+    try:
+        result = genai.embed_content(
+            model="models/text-embedding-004",
+            content=text,
+            task_type="retrieval_document"
+        )
+        return result['embedding']
+    except Exception as e:
+        print(f"⚠️ Error getting embedding: {e}")
+        return []
 
-def ingest_documents_to_qdrant():
-    """
-    Orchestrates the process of reading markdown files, chunking them,
-    generating embeddings, and ingesting into Qdrant.
-    """
-    print(f"Starting ingestion process from {FRONTEND_DOCS_PATH}")
-
-    # Ensure collection exists
-    qdrant_client.recreate_collection(
-        collection_name=COLLECTION_NAME,
-        vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE), # models/embedding-001 size
-    )
-    print(f"Collection '{COLLECTION_NAME}' recreated/ensured.")
-
-    markdown_files = get_markdown_files(FRONTEND_DOCS_PATH)
-    if not markdown_files:
-        print("No markdown files found to ingest.")
+def ingest_docs():
+    setup_collection()
+    
+    # Locate Docs
+    project_root = backend_dir.parent
+    docs_path = project_root / "frontend" / "docs"
+    
+    files = list(docs_path.glob("**/*.md"))
+    
+    if not files:
+        print("❌ ERROR: No .md files found in frontend/docs")
         return
 
+    print(f"📂 Found {len(files)} files to upload to Cloud.")
+    
     points = []
-    for file_path in markdown_files:
-        print(f"Processing file: {file_path}")
-        file_chunks = chunk_markdown(file_path)
-        for chunk in file_chunks:
-            embedding = generate_embeddings(chunk["content"])
-            points.append(
-                models.PointStruct(
-                    vector=embedding,
-                    payload=chunk["metadata"].copy().update({"content": chunk["content"]}) # Store content in payload too
-                )
-            )
-            # Qdrant recommends batching for performance
-            if len(points) >= 100: # Batch size
-                qdrant_client.upsert(
-                    collection_name=COLLECTION_NAME,
-                    wait=True,
-                    points=points
-                )
-                print(f"Ingested {len(points)} points.")
-                points = []
+    idx = 0
+    
+    for file_path in files:
+        print(f"Reading: {file_path.name}")
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+            
+        chunks = [c for c in content.split("\n\n") if len(c) > 50]
+        
+        for chunk in chunks:
+            vector = get_embedding(chunk)
+            time.sleep(1.5) # Speed limit
+            
+            if vector:
+                points.append(PointStruct(
+                    id=idx,
+                    vector=vector,
+                    payload={"source": file_path.name, "text": chunk}
+                ))
+                idx += 1
+                print(f"   -> Prepared chunk {idx}")
 
-    # Ingest any remaining points
     if points:
-        qdrant_client.upsert(
+        print("🚀 Uploading data to Qdrant Cloud... (Please wait)")
+        qdrant.upsert(
             collection_name=COLLECTION_NAME,
-            wait=True,
             points=points
         )
-        print(f"Ingested {len(points)} remaining points.")
-
-    print("Ingestion process completed.")
+        print(f"✅ SUCCESS! {len(points)} chunks uploaded to Cloud Database!")
 
 if __name__ == "__main__":
-    # Example usage:
-    # Ensure .env file has QDRANT_HOST, QDRANT_API_KEY, GOOGLE_API_KEY
-    # Create an .env file in the backend directory with these variables
-    # For example:
-    # QDRANT_HOST="<your_qdrant_host>"
-    # QDRANT_API_KEY="<your_qdrant_api_key>"
-    # GOOGLE_API_KEY="<your_google_api_key>"
-    ingest_documents_to_qdrant()
+    ingest_docs()

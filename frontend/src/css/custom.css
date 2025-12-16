@@ -4,27 +4,276 @@
  * work well for content-centric websites.
  */
 
-/* You can override the default Infima variables here. */
+/* Cyberpunk Robotics Theme - Modern Dark Mode */
 :root {
-  --ifm-color-primary: #d946a6;
-  --ifm-color-primary-dark: #c2297a;
-  --ifm-color-primary-darker: #b91666;
-  --ifm-color-primary-darkest: #a01555;
-  --ifm-color-primary-light: #ec4899;
-  --ifm-color-primary-lighter: #f472b6;
-  --ifm-color-primary-lightest: #fbbbf9;
+  /* Cyberpunk Robotics Color Palette */
+  --cyber-dark-bg: #0a0a0f;
+  --cyber-darker-bg: #050508;
+  --cyber-gray: #1a1a20;
+  --cyber-light-gray: #2a2a30;
+  --cyber-border: #33333d;
+
+  /* Neon Accents */
+  --cyber-neon-blue: #00f7ff;
+  --cyber-electric-purple: #bd00ff;
+  --cyber-vibrant-green: #00ff9d;
+  --cyber-pink: #ff00c8;
+
+  /* Infima overrides for light mode (though we'll focus on dark) */
+  --ifm-color-primary: #00f7ff;
+  --ifm-color-primary-dark: #00c5cc;
+  --ifm-color-primary-darker: #00a9b0;
+  --ifm-color-primary-darkest: #007a80;
+  --ifm-color-primary-light: #33f9ff;
+  --ifm-color-primary-lighter: #66fbff;
+  --ifm-color-primary-lightest: #99fdff;
   --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(0, 247, 255, 0.15);
+
+  /* Typography */
+  --ifm-font-family-base: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
+/* Modern Dark Mode - Cyberpunk Robotics */
 [data-theme='dark'] {
-  --ifm-color-primary: #ec4899;
-  --ifm-color-primary-dark: #db2777;
-  --ifm-color-primary-darker: #be185d;
-  --ifm-color-primary-darkest: #9d174d;
-  --ifm-color-primary-light: #f472b6;
-  --ifm-color-primary-lighter: #fbbbf9;
-  --ifm-color-primary-lightest: #fce7f3;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  /* Cyberpunk Robotics Color Palette */
+  --cyber-dark-bg: #0a0a0f;
+  --cyber-darker-bg: #050508;
+  --cyber-gray: #1a1a20;
+  --cyber-light-gray: #2a2a30;
+  --cyber-border: #33333d;
+
+  /* Neon Accents */
+  --cyber-neon-blue: #00f7ff;
+  --cyber-electric-purple: #bd00ff;
+  --cyber-vibrant-green: #00ff9d;
+  --cyber-pink: #ff00c8;
+
+  /* Infima overrides for dark mode */
+  --ifm-color-primary: #00f7ff;
+  --ifm-color-primary-dark: #00c5cc;
+  --ifm-color-primary-darker: #00a9b0;
+  --ifm-color-primary-darkest: #007a80;
+  --ifm-color-primary-light: #33f9ff;
+  --ifm-color-primary-lighter: #66fbff;
+  --ifm-color-primary-lightest: #99fdff;
+  --ifm-color-emphasis-200: #33333d;
+  --ifm-color-content: #e0e0e0;
+  --ifm-color-content-secondary: #b0b0b0;
+  --ifm-background-color: #0a0a0f;
+  --ifm-background-surface-color: #0a0a0f;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 247, 255, 0.15);
+}
+
+/* Global Styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(135deg, var(--cyber-darker-bg) 0%, var(--cyber-dark-bg) 100%);
+  background-attachment: fixed;
+  color: var(--ifm-color-content);
+  transition: background 0.3s ease;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--cyber-neon-blue) 0%, var(--cyber-electric-purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(0, 247, 255, 0.2);
+}
+
+/* Hero Banner - Dark Background for Better Contrast */
+.hero--primary {
+  --ifm-hero-background-color: var(--cyber-darker-bg) !important;
+  --ifm-hero-text-color: white !important;
+  background: linear-gradient(135deg, #0b0b15 0%, #000000 100%) !important;
+}
+
+/* Specific hero banner styling */
+html[data-theme='dark'] .heroBanner {
+  background: linear-gradient(135deg, #0b0b15 0%, #000000 100%) !important;
+}
+
+.hero__title {
+  color: white !important;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
+  font-size: 3.5rem !important;
+  font-weight: 700 !important;
+}
+
+.hero__subtitle {
+  color: #e0e0e0 !important;
+  font-size: 1.5rem !important;
+  opacity: 0.9 !important;
+}
+
+/* Navbar - Glassmorphism Style */
+.navbar {
+  background: rgba(10, 10, 15, 0.8) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.navbar__item, .navbar__link {
+  color: var(--ifm-color-content) !important;
+  transition: color 0.3s ease;
+}
+
+.navbar__item:hover, .navbar__link:hover {
+  color: var(--cyber-neon-blue) !important;
+  text-shadow: 0 0 8px rgba(0, 247, 255, 0.6);
+}
+
+/* Buttons - With glow effects */
+.button {
+  background: linear-gradient(45deg, var(--cyber-neon-blue), var(--cyber-electric-purple)) !important;
+  border: none !important;
+  color: white !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 15px rgba(0, 247, 255, 0.2) !important;
+}
+
+.button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 247, 255, 0.4) !important;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
+}
+
+.button:active {
+  transform: translateY(0) !important;
+}
+
+/* Cards/Containers - Glowing borders */
+.card {
+  background: var(--cyber-gray) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.card:hover {
+  border-color: var(--cyber-neon-blue) !important;
+  box-shadow: 0 0 20px rgba(0, 247, 255, 0.2) !important;
+  transform: translateY(-5px) !important;
+}
+
+/* Links */
+a {
+  color: var(--cyber-neon-blue) !important;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--cyber-vibrant-green) !important;
+  text-shadow: 0 0 8px rgba(0, 255, 157, 0.6);
+}
+
+/* Code blocks */
+.code-block, .prism-code {
+  background: var(--cyber-light-gray) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Headers in docs */
+.docTitle_node_modules-\@docusaurus-theme-classic-lib-theme-DocItem- {
+  background: linear-gradient(90deg, var(--cyber-neon-blue) 0%, var(--cyber-electric-purple) 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* Footer */
+.footer {
+  background: var(--cyber-darker-bg) !important;
+  border-top: 1px solid var(--cyber-border) !important;
+}
+
+/* Sidebar */
+.menu {
+  background: var(--cyber-gray) !important;
+  border-right: 1px solid var(--cyber-border) !important;
+}
+
+/* Tables */
+.table {
+  background: var(--cyber-light-gray) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 8px !important;
+}
+
+/* Search bar */
+.navbar__search-input {
+  background: var(--cyber-light-gray) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 6px !important;
+  color: var(--ifm-color-content) !important;
+}
+
+.navbar__search-input::placeholder {
+  color: var(--ifm-color-content-secondary) !important;
+}
+
+/* Custom glowing effects */
+.glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px var(--cyber-neon-blue);
+  }
+  to {
+    box-shadow: 0 0 20px var(--cyber-neon-blue), 0 0 30px var(--cyber-electric-purple);
+  }
+}
+
+/* Horizontal rules */
+hr {
+  border-color: var(--cyber-border) !important;
+  border-width: 1px !important;
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 3px solid var(--cyber-neon-blue) !important;
+  background: var(--cyber-light-gray) !important;
+  border-radius: 0 8px 8px 0 !important;
+}
+
+/* Lists */
+ul, ol {
+  color: var(--ifm-color-content) !important;
+}
+
+/* Inputs */
+input, textarea, select {
+  background: var(--cyber-light-gray) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 6px !important;
+  color: var(--ifm-color-content) !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--cyber-neon-blue) !important;
+  box-shadow: 0 0 0 2px rgba(0, 247, 255, 0.2) !important;
+  outline: none !important;
 }

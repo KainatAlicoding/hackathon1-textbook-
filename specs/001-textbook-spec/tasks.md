@@ -20,9 +20,16 @@
 - [x] Create a basic `backend/app/main.py` to initialize FastAPI.
 - [x] Create `backend/app/ingest.py` to read Markdown files from `frontend/docs` and chunk them for the Vector Database.
 
-- [ ] Refactor `backend/requirements.txt` and `backend/app/ingest.py` to replace OpenAI with **Google Gemini (`google-generativeai`)** for embeddings.
-- [ ] Create `backend/api/chat.py` to handle user questions using **Gemini Pro**. It must:
+- [x] Refactor `backend/requirements.txt` and `backend/app/ingest.py` to replace OpenAI with **Google Gemini (`google-generativeai`)** for embeddings.
+- [x] Create `backend/api/chat.py` to handle user questions using **Gemini Pro**. It must:
     1. Accept a user query.
     2. Create embedding using `models/embedding-001`.
     3. Search Qdrant for book context.
     4. Generate answer using `gemini-pro`.
+- [x] Update `backend/app/main.py` to:
+    1. Import and include the `chat` router from `backend.api.chat`.
+    2. Add `CORSMiddleware` to allow requests from `http://localhost:3000` (Frontend).
+    3. Ensure the root endpoint `/` returns a simple health check message like `{"status": "ok"}`.
+- [x] Create a helper script `run_backend.py` (or instructions) at the root to easily start the uvicorn server.
+- [x] Build a Floating Chatbot Widget for the Docusaurus project with: 1) src/components/Chatbot.js (React component), 2) src/components/Chatbot.css (Styles), 3) src/theme/Root.js (Integration) following all UI requirements (floating button, chat window, header, message list, input field, dark mode compatibility) and logic requirements (user input, thinking loader, POST request to backend, response display, sources chips).
+- [x] Modernize the UI of the Docusaurus site with a cyberpunk robotics dark theme: 1) Update src/css/custom.css with modern dark theme using neon accents and glassmorphism effects, 2) Transform homepage hero section with new text and robot placeholder image, 3) Update HomepageFeatures with robotics-focused content, 4) Create first blog post about Physical AI textbook.

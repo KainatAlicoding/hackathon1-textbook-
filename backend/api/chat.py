@@ -1,85 +1,92 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import List
+import google.generativeai as genai
+from qdrant_client import QdrantClient
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
-from qdrant_client import QdrantClient, models
-
-# Load environment variables
-load_dotenv()
-
-QDRANT_HOST = os.getenv("QDRANT_HOST")
-QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-
-# Initialize clients
-qdrant_client = QdrantClient(host=QDRANT_HOST, api_key=QDRANT_API_KEY)
-genai.configure(api_key=GOOGLE_API_KEY)
+from pathlib import Path
 
 router = APIRouter()
 
-COLLECTION_NAME = "textbook_chunks"
-EMBEDDING_MODEL = "models/embedding-001"
-GENERATION_MODEL = "gemini-pro"
+# --- 🛠️ LOAD .ENV CORRECTLY ---
+# Hum ensure karenge ke .env file har haal mein mil jaye
+current_file = Path(__file__).resolve()
+backend_dir = current_file.parent.parent
+env_path = backend_dir / ".env"
+load_dotenv(dotenv_path=env_path)
 
-class QueryRequest(BaseModel):
-    query: str
+# 1. Setup Gemini API
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    print("❌ ERROR: GOOGLE_API_KEY missing.")
+else:
+    genai.configure(api_key=GOOGLE_API_KEY)
 
-class ChatResponse(BaseModel):
-    response: str
-    sources: List[str]
+# 2. Setup Qdrant Cloud ☁️
+QDRANT_URL = os.getenv("QDRANT_URL")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 
-def generate_embedding(text: str) -> List[float]:
-    """Generate embeddings for a given text using Google Generative AI."""
-    response = genai.embed_content(
-        model=EMBEDDING_MODEL,
-        content=text,
-        task_type="RETRIEVAL_QUERY"
-    )
-    return response['embedding']
+if not QDRANT_URL or not QDRANT_API_KEY:
+    print("❌ ERROR: Qdrant Cloud credentials missing in .env")
+else:
+    print(f"🌐 Connecting Chat API to Cloud: {QDRANT_URL}")
 
-@router.post("/chat", response_model=ChatResponse)
-async def chat_with_gemini(request: QueryRequest):
+# Local path ki jagah ab Cloud URL use hoga
+qdrant = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+COLLECTION_NAME = "physical_ai_textbook"
+
+class ChatRequest(BaseModel):
+    message: str
+
+@router.post("/chat")
+async def chat_endpoint(request: ChatRequest):
     try:
-        user_query = request.query
-
-        # 1. Create embedding for the user query
-        query_embedding = generate_embedding(user_query)
-
-        # 2. Search Qdrant for book context
-        search_result = qdrant_client.search(
-            collection_name=COLLECTION_NAME,
-            query_vector=query_embedding,
-            limit=3  # Retrieve top 3 relevant chunks
+        query = request.message
+        print(f"User asked: {query}")
+        
+        # 3. Create Embedding
+        embedding_result = genai.embed_content(
+            model="models/text-embedding-004",
+            content=query,
+            task_type="retrieval_query"
         )
-
-        context = []
+        
+        # 4. Search Cloud Database
+        search_results = qdrant.search(
+            collection_name=COLLECTION_NAME,
+            query_vector=embedding_result['embedding'],
+            limit=5
+        )
+        
+        # 5. Build Context
+        context = ""
         sources = []
-        for hit in search_result:
-            if hit.payload and "content" in hit.payload:
-                context.append(hit.payload["content"])
-                if "source_file" in hit.payload:
-                    sources.append(hit.payload["source_file"]) # Collect source files
+        for result in search_results:
+            context += result.payload['text'] + "\n---\n"
+            sources.append(result.payload['source'])
+            
+        if not context:
+            context = "No relevant textbook content found."
+            print("⚠️ Cloud Database mein koi match nahi mila.")
 
-        context_text = "\n\n".join(context)
-
-        # 3. Generate answer using gemini-pro
-        prompt = f"""You are a helpful assistant for a textbook on Physical AI & Humanoid Robotics.
-        Answer the user's question based ONLY on the provided context.
-        If the answer is not in the context, politely state that you cannot answer from the provided information.
-
-        Context: {context_text}
-
-        Question: {user_query}
-        Answer:"""
-
-        response = genai.GenerativeModel(GENERATION_MODEL).generate_content(prompt)
-
-        # Ensure unique sources and return
-        unique_sources = list(set(sources))
-
-        return ChatResponse(response=response.text, sources=unique_sources)
+        # 6. Generate Answer with Gemini Stable Version 🛡️
+        prompt = f"""
+        You are an AI Tutor for a Robotics Course. Answer the student's question using ONLY the context provided below.
+        
+        Context:
+        {context}
+        
+        Question: {query}
+        
+        Answer:
+        """
+        
+        # --- CHANGE: Using 'gemini-flash-latest' (Most Reliable) ---
+        model = genai.GenerativeModel('models/gemini-flash-latest') 
+        response = model.generate_content(prompt)
+        
+        return {"response": response.text, "sources": list(set(sources))}
 
     except Exception as e:
+        print(f"🔥 SERVER ERROR: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
