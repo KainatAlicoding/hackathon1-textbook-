@@ -7,4 +7,4 @@ pydantic
 pydantic-settings
 requests
 python-multipart
-httpxcd backend
+httpxcd 
