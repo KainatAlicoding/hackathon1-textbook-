@@ -1,3 +1,11 @@
+import sys
+import os
+
+# Current folder se 2 steps peeche ja kar root path add karega
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
+
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.api.chat import router as chat_router
