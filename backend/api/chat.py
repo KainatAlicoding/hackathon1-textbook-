@@ -52,7 +52,7 @@ async def chat_endpoint(request: ChatRequest):
         )
         
         # 4. Search Cloud Database
-        search_results = qdrant.search(
+        search_results = qdrant.points.search(
             collection_name=COLLECTION_NAME,
             query_vector=embedding_result['embedding'],
             limit=5
